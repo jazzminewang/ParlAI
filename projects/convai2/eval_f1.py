@@ -21,6 +21,7 @@ def setup_args(parser=None):
         hide_labels=False,
         dict_tokenizer='split',
         metrics='f1',
+        display_examples=True,
     )
     return parser
 
