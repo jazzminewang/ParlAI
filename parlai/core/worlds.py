@@ -714,6 +714,7 @@ class HogwildProcess(Process):
 
     def __init__(self, tid, opt, shared, sync):
         self.numthreads = opt['numthreads']
+        #self.numthreads = 1
         opt = copy.deepcopy(opt)
         opt['numthreads'] = 1  # don't let threads create more threads!
         self.opt = opt

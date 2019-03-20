@@ -15,7 +15,7 @@ if __name__ == '__main__':
     parser.set_defaults(
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
         model_file='models:convai2/kvmemnn/model',
-        numthreads=80,
+        numthreads=1,
     )
     opt = parser.parse_args(print_args=False)
     # build all profile memory models

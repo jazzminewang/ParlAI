@@ -23,14 +23,14 @@ from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 
 import random
-
+import time
 
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Evaluate a model')
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
+    parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('--metrics', type=str, default="all",
                         help="list of metrics to show/compute, e.g. "
@@ -78,18 +78,21 @@ def eval_model(opt, printargs=None, print_parser=None):
 
     # Show some example dialogs:
     cnt = 0
-    while not world.epoch_done():
-        cnt += opt.get('batchsize', 1)
-        world.parley()
-        if opt['display_examples']:
-            print(world.display() + "\n~~")
-        if log_time.time() > log_every_n_secs:
-            report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(),
-                                        report)
-            print(text)
-        if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
-            break
+    file_name = "results" + str(time.time()) + ".txt"
+    print("Writing to " + file_name)
+    with open(file_name, "w+") as results:
+        while not world.epoch_done():
+            cnt += opt.get('batchsize', 1) 
+            world.parley()
+            if opt['display_examples']:
+                print(world.display() + "\n~~")
+                results.write(world.display() + "\n")
+            if log_time.time() > log_every_n_secs:
+                report = world.report()
+                text, report = log_time.log(report['exs'], world.num_examples(), report)
+                print(text)
+            if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
+                break
     if world.epoch_done():
         print("EPOCH DONE")
     print('finished evaluating task {} using datatype {}'.format(
