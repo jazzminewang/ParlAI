@@ -785,9 +785,9 @@ def display_messages(msgs, prettify=True, ignore_fields='', max_len=1000):
             text = clip_text(msg['text'], max_len)
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
-        for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
-            if msg.get(field) and field not in ignore_fields:
-                lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
+        # for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
+        #     if msg.get(field) and field not in ignore_fields:
+        #         lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
 
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')

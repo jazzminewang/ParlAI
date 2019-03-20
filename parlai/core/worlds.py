@@ -1000,18 +1000,22 @@ def create_task(opt, user_agents, default_world=None):
 
     # check if single or multithreaded, and single-example or batched examples
     if ',' not in opt['task']:
+        print("Creating single task")
         # Single task
         world = create_task_world(opt, user_agents, default_world=default_world)
     else:
+        print("Creating multitask world")
         # Multitask teacher/agent
         # TODO: remove and replace with multiteachers only?
         world = MultiWorld(opt, user_agents, default_world=default_world)
 
     if opt.get('numthreads', 1) > 1:
+        print("Creating Hogwild world")
         # use hogwild world if more than one thread requested
         # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
     elif opt.get('batchsize', 1) > 1:
+        print("Creating batch world")
         # otherwise check if should use batchworld
         world = BatchWorld(opt, world)
 
