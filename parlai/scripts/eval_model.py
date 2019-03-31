@@ -40,6 +40,7 @@ def setup_args(parser=None):
     parser.set_defaults(datatype='valid')
     return parser
 
+def write_to_csv()
 
 def eval_model(opt, printargs=None, print_parser=None):
     """Evaluates a model.
@@ -78,7 +79,8 @@ def eval_model(opt, printargs=None, print_parser=None):
 
     # Show some example dialogs:
     cnt = 0
-    file_name = "results" + str(time.time()) + ".txt"
+    datatype = opt.get('datatype')
+    file_name = "results" + str(time.time()) + datatype + ".txt"
     print("Writing to " + file_name)
     with open(file_name, "w+") as results:
         while not world.epoch_done():
@@ -86,11 +88,7 @@ def eval_model(opt, printargs=None, print_parser=None):
             world.parley()
             if opt['display_examples']:
                 print(world.display() + "\n~~")
-                results.write(world.display() + "\n")
-            # if log_time.time() > log_every_n_secs:
-            #     report = world.report()
-            #     text, report = log_time.log(report['exs'], world.num_examples(), report)
-            #     print(text)
+                results.write(world.display() + "\n"))
             if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
                 break
     if world.epoch_done():
