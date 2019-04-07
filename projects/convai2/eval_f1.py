@@ -15,7 +15,7 @@ def setup_args(parser=None):
     parser = base_setup_args(parser)
     parser.set_defaults(
         task='convai2:self:no_cands',
-        datatype='train:evalmode:ordered',
+        datatype='test:stream',
         hide_labels=False,
         dict_tokenizer='split',
         metrics='f1',

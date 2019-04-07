@@ -41,7 +41,6 @@ def setup_args(parser=None):
     parser.set_defaults(datatype='valid')
     return parser
 
-def write_to_csv()
 
 def eval_model(opt, printargs=None, print_parser=None):
     """Evaluates a model.
@@ -88,8 +87,8 @@ def eval_model(opt, printargs=None, print_parser=None):
             cnt += opt.get('batchsize', 1) 
             world.parley()
             if opt['display_examples']:
-                print(world.display() + "\n~~")
-                results.write(world.display() + "\n"))
+                print("Writing to file " + file_name)
+                results.write(world.display() + "\n")
             if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
                 break
     if world.epoch_done():
