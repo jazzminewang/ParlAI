@@ -8,6 +8,7 @@
 General utilities for helping writing ParlAI unit and integration tests.
 """
 
+import sys
 import os
 import unittest
 import contextlib
@@ -36,6 +37,11 @@ except ImportError:
 DEBUG = False  # change this to true to print to stdout anyway
 
 
+def is_this_circleci():
+    """Returns if we are currently running in CircleCI."""
+    return bool(os.environ.get('CIRCLECI'))
+
+
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
     """Decorator for skipping a test if torch is not installed."""
     return unittest.skipUnless(TORCH_AVAILABLE, reason)(testfn)
@@ -55,9 +61,9 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
-def skipIfTravis(testfn, reason='Test disabled in Travis'):
-    """Decorator for skipping a test if running on Travis."""
-    return unittest.skipIf(os.environ.get('TRAVIS'), reason)(testfn)
+def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
+    """Decorator for skipping a test if running on CircleCI."""
+    return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
 class retry(object):
@@ -112,11 +118,46 @@ def git_changed_files(skip_nonexisting=True):
     """
     Lists all the changed files in the git repository.
     """
-    fork_point = git_.merge_base('--fork-point', 'origin/master').strip()
+    fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
         filenames = [fn for fn in filenames if os.path.exists(fn)]
     return filenames
+
+
+def git_commit_messages():
+    """
+    Outputs each commit message between here and master.
+    """
+    fork_point = git_.merge_base('origin/master', 'HEAD').strip()
+    messages = git_.log(fork_point + '..HEAD')
+    return messages
+
+
+def is_new_task_filename(filename):
+    """
+    Checks if a given filename counts as a new task. Used in tests and
+    test triggers, and only here to avoid redundancy.
+    """
+    return (
+        'parlai/tasks' in filename and
+        'README' not in filename and
+        'task_list.py' not in filename
+    )
+
+
+class TeeStringIO(io.StringIO):
+    """
+    StringIO which also prints to stdout.
+    """
+    def __init__(self, *args):
+        self.stream = sys.stdout
+        super().__init__(*args)
+
+    def write(self, data):
+        if DEBUG and self.stream:
+            self.stream.write(data)
+        super().write(data)
 
 
 @contextlib.contextmanager
@@ -133,12 +174,9 @@ def capture_output():
     >>> output.getvalue()
     'hello'
     """
-    if DEBUG:
-        yield
-    else:
-        sio = io.StringIO()
-        with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
-            yield sio
+    sio = TeeStringIO()
+    with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
+        yield sio
 
 
 @contextlib.contextmanager
@@ -173,8 +211,14 @@ def train_model(opt):
             if 'dict_file' not in opt:
                 opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
             parser = tms.setup_args()
+            # needed at the very least to set the overrides.
             parser.set_params(**opt)
             popt = parser.parse_args(print_args=False)
+            # in some rare cases, like for instance if the model class also
+            # overrides its default params, the params override will not
+            # be taken into account.
+            for k, v in opt.items():
+                popt[k] = v
             tl = tms.TrainLoop(popt)
             valid, test = tl.train()
 
@@ -225,7 +269,7 @@ def download_unittest_models():
     model_filenames = [
         'seq2seq.tar.gz',
         'transformer_ranker.tar.gz',
-        'transformer_generator.tar.gz'
+        'transformer_generator2.tar.gz'
     ]
     with capture_output() as _:
-        download_models(opt, model_filenames, 'unittest')
+        download_models(opt, model_filenames, 'unittest', version='v2.0')

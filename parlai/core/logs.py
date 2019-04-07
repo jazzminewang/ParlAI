@@ -16,29 +16,27 @@ Tensorboard:
 import os
 
 
-class Shared(object):
+class TensorboardLogger(object):
     _shared_state = {}
 
-    def __init__(self):
-        self.__dict__ = self._shared_state
-
-
-class TensorboardLogger(Shared):
     @staticmethod
     def add_cmdline_args(argparser):
         logger = argparser.add_argument_group('Tensorboard Arguments')
         logger.add_argument(
             '-tblog', '--tensorboard-log', type='bool', default=False,
-            help="Tensorboard logging of metrics, default is %(default)s"
+            help="Tensorboard logging of metrics, default is %(default)s",
+            hidden=True
         )
         logger.add_argument(
             '-tbtag', '--tensorboard-tag', type=str, default=None,
-            help='Specify all opt keys which you want to be presented in in TB name'
+            help='Specify all opt keys which you want to be presented in in TB name',
+            hidden=True
         )
         logger.add_argument(
             '-tbmetrics', '--tensorboard-metrics', type=str, default=None,
             help='Specify metrics which you want to track, it will be extracted '
-                 'from report dict.'
+                 'from report dict.',
+            hidden=True
         )
         logger.add_argument(
             '-tbcomment', '--tensorboard-comment', type=str, default='',
@@ -47,7 +45,7 @@ class TensorboardLogger(Shared):
         )
 
     def __init__(self, opt):
-        Shared.__init__(self)
+        self.__dict__ = self._shared_state
         try:
             from tensorboardX import SummaryWriter
         except ImportError:

@@ -438,7 +438,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent.wait_for_alive()
         agent.send_heartbeat()
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_successful_convo(self):
         manager = self.mturk_manager
 
@@ -501,7 +500,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 2, 2)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_disconnect_end(self):
         manager = self.mturk_manager
 
@@ -569,7 +567,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 2, 2)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_expire_onboarding(self):
         manager = self.mturk_manager
 
@@ -598,7 +595,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 1, 2)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_reconnect_complete(self):
         manager = self.mturk_manager
 
@@ -675,7 +671,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 2, 2)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_attempt_break_unique(self):
         manager = self.mturk_manager
         unique_worker_qual = 'is_unique_qual'
@@ -771,7 +766,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 3, 2)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_break_multi_convo(self):
         manager = self.mturk_manager
         manager.opt['allowed_conversations'] = 1
@@ -856,7 +850,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 3, 2)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_no_onboard_expire_waiting(self):
         manager = self.mturk_manager
         manager.set_onboard_function(None)
@@ -881,7 +874,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 1, 2)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_return_to_waiting_on_world_start(self):
         manager = self.mturk_manager
 
