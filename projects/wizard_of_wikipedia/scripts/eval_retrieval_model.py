@@ -26,7 +26,7 @@ Hits@1/100: 68.96
 if __name__ == '__main__':
     parser = ParlaiParser(add_model_args=True)
     parser.add_argument('-n', '--num-examples', default=100000000)
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
+    parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     WizardTransformerRankerAgent.add_cmdline_args(parser)
     parser.set_params(
