@@ -618,7 +618,8 @@ class KvmemnnAgent(Agent):
                     #print("   [1st hop qmatch: " + ypredorig + "]")
                     #print("   [1st hop nextut: " + ypred + "]")
                     if self.tricks:
-                        if ztxt[ind[0].item()] == ypred:
+		    	if ztxt[ind[0].item()] == ypred:
+                            print("eq to ypred, substituting")
                             ypred = ztxt[ind[1].item()] # match
                         self.cands_done.append(ypred)
                     else:
