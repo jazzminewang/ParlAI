@@ -564,7 +564,6 @@ class KvmemnnAgent(Agent):
                 val,ind=pred.sort(descending=True)
                 # this is ground truth
                 ypred = cands_txt2[0][ind[0].item()] # reply to match
-
                 if self.opt.get('kvmemnn_debug', False):
                     print("twohop-range:", self.opt.get('twohop_range', 100))
                     for i in range(10):
@@ -618,9 +617,11 @@ class KvmemnnAgent(Agent):
                     #print("   [1st hop qmatch: " + ypredorig + "]")
                     #print("   [1st hop nextut: " + ypred + "]")
                     if self.tricks:
-		    	        if ztxt[ind[0].item()] == ypred:
-                            print("eq to ypred, substituting")
-                            ypred = ztxt[ind[1].item()] # match
+                        if ztxt[ind[0].item()].strip() == ypred.strip():
+                            ypred = ztxt[ind[1].item()]
+                        else:
+                            ypred = ztxt[ind[0].item()]
+                        time.sleep(5)
                         self.cands_done.append(ypred)
                     else:
                         ypred = self.fixedCands_txt[ind[1].item()] # match
@@ -630,6 +631,7 @@ class KvmemnnAgent(Agent):
                     self.history['labels'] = [ypred]
                     #print("   [final pred: " + ypred + "]")
                     ret = [{'text': ypred, 'text_candidates': tc }]
+                    print("returning in trick block")
                     return ret
                 elif self.take_next_utt and not self.interactiveMode:
                     xe, ye = self.model(xs2, obs[0]['mem'], ys, cands[0])
@@ -643,7 +645,7 @@ class KvmemnnAgent(Agent):
                     pred = alpha*pred + 1*origpred
                     val,ind=pred.sort(descending=True)
                     # predict the highest scoring candidate, and return it.
-                    ypred = cands_txt[0][ind[0].item()] # match
+                    ypred = cands_txt[0][ind[1].item()] + "subagain"# match
                     tc = []
                     for i in range(len(ind)):
                         tc.append(cands_txt[0][ind[i].item()])
@@ -655,7 +657,8 @@ class KvmemnnAgent(Agent):
                     x = self.model(xs, obs[0]['mem'], ys, cands[0])
                     pred = x #.squeeze()
                 val,ind=pred.sort(descending=True)
-                ypred = cands_txt[0][ind[0].item()] # match
+                print("take next utt and not interactive")
+                ypred = cands_txt[0][ind[1].item()] # match
                 tc = []
                 for i in range(min(100, ind.size(0))):
                     tc.append(cands_txt[0][ind[i].item()])
