@@ -22,6 +22,7 @@ import os
 import random
 import pickle
 
+
 def maintain_dialog_history(history, observation, reply='',
                             historyLength=1, useReplies="labels",
                             dict=None, useStartEndIndices=True,
@@ -564,6 +565,12 @@ class KvmemnnAgent(Agent):
                 origpred = pred
                 val,ind=pred.sort(descending=True)
                 ypred = cands_txt2[0][ind[0].item()] # reply to match
+
+                print("line 566")
+                print("predicted: " + ypred)
+                print("alternative: " +  cands_txt2[1][ind[1].item()])
+                time.sleep(3)
+
                 if self.opt.get('kvmemnn_debug', False):
                     print("twohop-range:", self.opt.get('twohop_range', 100))
                     for i in range(10):
@@ -656,6 +663,11 @@ class KvmemnnAgent(Agent):
                 tc = []
                 for i in range(min(100, ind.size(0))):
                     tc.append(cands_txt[0][ind[i].item()])
+            
+            print("line 666")
+            print("predicted: " + ypred)
+            print("alternative: " +  cands_txt2[1][ind[1].item()])
+            time.sleep(3)
             ret = [{'text': ypred, 'text_candidates': tc }]
             return ret
         return [{}] * xs.size(0)
