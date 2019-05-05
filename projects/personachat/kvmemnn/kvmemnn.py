@@ -312,8 +312,6 @@ class KvmemnnAgent(Agent):
                 # skip non-model args
                 continue
             if k not in self.opt:
-                print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
-            elif self.opt[k] != v:
                 print('Overriding option [ {k}: {old} => {v}]'.format(
                       k=k, old=self.opt[k], v=v))
             self.opt[k] = v
@@ -564,12 +562,8 @@ class KvmemnnAgent(Agent):
                 origxe = xe
                 origpred = pred
                 val,ind=pred.sort(descending=True)
+                # this is ground truth
                 ypred = cands_txt2[0][ind[0].item()] # reply to match
-
-                print("line 566")
-                print("predicted: " + ypred)
-                print("alternative: " +  cands_txt2[1][ind[1].item()])
-                time.sleep(3)
 
                 if self.opt.get('kvmemnn_debug', False):
                     print("twohop-range:", self.opt.get('twohop_range', 100))
@@ -624,11 +618,12 @@ class KvmemnnAgent(Agent):
                     #print("   [1st hop qmatch: " + ypredorig + "]")
                     #print("   [1st hop nextut: " + ypred + "]")
                     if self.tricks:
-                        ypred = ztxt[ind[0].item()] # match
+                        if ztxt[ind[0].item()] == ypred:
+                            ypred = ztxt[ind[1].item()] # match
                         self.cands_done.append(ypred)
                     else:
-                        ypred = self.fixedCands_txt[ind[0].item()] # match
-                        self.cands_done.append(ind[0].item())
+                        ypred = self.fixedCands_txt[ind[1].item()] # match
+                        self.cands_done.append(ind[1].item())
                         #print("   [2nd hop nextut: " + ypred2 + "]")
                     tc = [ypred]
                     self.history['labels'] = [ypred]
@@ -664,10 +659,6 @@ class KvmemnnAgent(Agent):
                 for i in range(min(100, ind.size(0))):
                     tc.append(cands_txt[0][ind[i].item()])
             
-            print("line 666")
-            print("predicted: " + ypred)
-            print("alternative: " +  cands_txt2[1][ind[1].item()])
-            time.sleep(3)
             ret = [{'text': ypred, 'text_candidates': tc }]
             return ret
         return [{}] * xs.size(0)
