@@ -79,7 +79,8 @@ def eval_model(opt, printargs=None, print_parser=None):
 
     # Show some example dialogs:
     cnt = 0
-    file_name = "results" + str(time.time()) + ".txt"
+    file_name = "results" + str(time.time()) + "wow" + ".txt"
+
     print("Writing to " + file_name)
     with open(file_name, "w+") as results:
         while not world.epoch_done():
