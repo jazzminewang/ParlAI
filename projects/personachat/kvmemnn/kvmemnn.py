@@ -621,7 +621,6 @@ class KvmemnnAgent(Agent):
                             ypred = ztxt[ind[1].item()]
                         else:
                             ypred = ztxt[ind[0].item()]
-                        time.sleep(5)
                         self.cands_done.append(ypred)
                     else:
                         ypred = self.fixedCands_txt[ind[1].item()] # match
